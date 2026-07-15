@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -184,7 +185,8 @@ public final class MainActivity extends Activity {
         }
 
         Collator collator = Collator.getInstance(Locale.getDefault());
-        entries.sort((left, right) -> collator.compare(left.label, right.label));
+        Collections.sort(entries, (left, right) ->
+                collator.compare(left.label, right.label));
 
         for (ComponentName component : parsed.components) {
             if (!installedComponents.contains(component)) {
