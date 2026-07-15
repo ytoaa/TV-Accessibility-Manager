@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV Accessibility Manager</string>
+    <string name="permission_granted">WRITE_SECURE_SETTINGS permission: granted</string>
+    <string name="permission_missing">WRITE_SECURE_SETTINGS permission: missing</string>
+    <string name="grant_help">Run the following command once from an external ADB client.</string>
+    <string name="refresh">Refresh</string>
+    <string name="restore">Restore previous</string>
+    <string name="save">Save selection</string>
+    <string name="no_services">No installed accessibility services were found.</string>
+    <string name="summary_format">Installed %1$d · enabled in settings %2$d · preserved unknown entries %3$d</string>
+    <string name="service_component">%1$s\n%2$s</string>
+    <string name="save_success">Accessibility settings saved.</string>
+    <string name="save_failed">Saving failed and the previous values were restored.</string>
+    <string name="verify_failed">Fire OS did not retain the change. Refresh and inspect the current state.</string>
+    <string name="restore_success">Restored the state from before the last save.</string>
+    <string name="restore_unavailable">No previous state is available.</string>
+    <string name="permission_required">Grant WRITE_SECURE_SETTINGS first.</string>
+    <string name="confirm_restore_title">Restore previous settings</string>
+    <string name="confirm_restore_message">Restore the accessibility service list from immediately before the last save?</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Restore</string>
+    <string name="unknown_preserved">Existing enabled entries not visible in this list are preserved for safety.</string>
+    <string name="auto_reapply">Reapply the last saved state after reboot (experimental)</string>
+    <string name="auto_reapply_enabled_notice">The last saved state will be applied again after boot. Make sure it does not re-enable a service you intended to disable.</string>
+</resources>
