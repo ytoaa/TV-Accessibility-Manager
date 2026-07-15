@@ -1,0 +1,86 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  JAVA_VERSION: "17"
+  ANDROID_COMPILE_SDK: "36"
+  ANDROID_BUILD_TOOLS: "35.0.0"
+  SIGNING_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+  SIGNING_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+  SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+  SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Install Android SDK packages
+        shell: bash
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager \
+            "platforms;android-${ANDROID_COMPILE_SDK}" \
+            "build-tools;${ANDROID_BUILD_TOOLS}"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Verify privileged scope
+        run: bash scripts/verify-privileged-scope.sh
+
+      - name: Unit test, lint, and debug build
+        run: gradle --no-daemon testDebugUnitTest lintDebug assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v5
+        with:
+          name: tv-accessibility-manager-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Decode release keystore
+        if: >-
+          env.SIGNING_KEYSTORE_BASE64 != '' &&
+          env.SIGNING_KEYSTORE_PASSWORD != '' &&
+          env.SIGNING_KEY_ALIAS != '' &&
+          env.SIGNING_KEY_PASSWORD != ''
+        shell: bash
+        run: |
+          printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+          echo "ANDROID_KEYSTORE_PASSWORD=$SIGNING_KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "ANDROID_KEY_ALIAS=$SIGNING_KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "ANDROID_KEY_PASSWORD=$SIGNING_KEY_PASSWORD" >> "$GITHUB_ENV"
+
+      - name: Build signed release APK
+        if: env.ANDROID_KEYSTORE_PATH != ''
+        run: gradle --no-daemon assembleRelease
+
+      - name: Upload signed release APK
+        if: env.ANDROID_KEYSTORE_PATH != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: tv-accessibility-manager-release
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
