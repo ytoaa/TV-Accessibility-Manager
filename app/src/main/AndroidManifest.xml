@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <!--
+        일반 앱에는 자동 부여되지 않으며, 설치 후 ADB로 한 번 부여해야 합니다.
+        tools:ignore는 의도적인 사용임을 Android Lint에 알리는 용도입니다.
+    -->
+    <uses-permission
+        android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- 재부팅 후 저장된 접근성 설정을 재적용하는 선택 기능 -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <uses-feature android:name="android.software.leanback" android:required="false" />
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <!-- Android TV 및 Fire TV 지원 -->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
 
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <!-- 설치된 AccessibilityService를 검색할 수 있도록 선언 -->
     <queries>
         <intent>
             <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -35,14 +51,21 @@
             android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="landscape">
+
+            <!-- Android TV 및 Fire TV 홈 화면 -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+
+            <!-- 일반 Android 런처에도 표시 -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
     </application>
+
 </manifest>
