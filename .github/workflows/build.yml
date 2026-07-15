@@ -53,7 +53,7 @@ jobs:
         run: gradle --no-daemon testDebugUnitTest lintDebug assembleDebug
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: tv-accessibility-manager-debug
           path: app/build/outputs/apk/debug/*.apk
@@ -79,7 +79,7 @@ jobs:
 
       - name: Upload signed release APK
         if: env.ANDROID_KEYSTORE_PATH != ''
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: tv-accessibility-manager-release
           path: app/build/outputs/apk/release/*.apk
